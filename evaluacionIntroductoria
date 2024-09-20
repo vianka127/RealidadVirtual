@@ -1,0 +1,593 @@
+using System;
+using System.Collections.Generic;
+
+namespace Gestion_Movimientos_Juego
+{
+    class Movimiento
+    {
+        public string Descripcion { get; set; }
+
+        public Movimiento(string descripcion)
+        {
+            this.Descripcion = descripcion;
+        }
+
+        public void Ejecutar(string nombrePersonaje)
+        {
+            Console.WriteLine($"{nombrePersonaje} ha ejecutado el movimiento: {Descripcion}");
+        }
+    }
+
+    class Personaje
+    {
+        public string Nombre { get; set; }
+        public List<Movimiento> Movimientos { get; set; }
+
+        public Personaje(string nombre)
+        {
+            this.Nombre = nombre;
+            this.Movimientos = new List<Movimiento>();
+        }
+
+        public void Moverse()
+        {
+            Console.WriteLine($"{Nombre} se ha movido.");
+        }
+
+        public void Disparar()
+        {
+            Console.WriteLine($"{Nombre} ha disparado.");
+        }
+
+        public void Saltar()
+        {
+            Console.WriteLine($"{Nombre} ha saltado.");
+        }
+    }
+
+    internal class Program
+    {
+        static List<Personaje> personajes = new List<Personaje>();
+
+        static void Main(string[] args)
+        {
+            bool ejecutandoPrograma = true;
+            while (ejecutandoPrograma)
+            {
+                Console.Clear();
+                Console.WriteLine("1. Crear Personaje");
+                Console.WriteLine("2. Ver Personajes");
+                Console.WriteLine("3. Actualizar Personaje");
+                Console.WriteLine("4. Eliminar Personaje");
+                Console.WriteLine("5. Crear Movimiento para un Personaje");
+                Console.WriteLine("6. Ver Movimientos de un Personaje");
+                Console.WriteLine("7. Actualizar Movimiento de un Personaje");
+                Console.WriteLine("8. Eliminar Movimiento de un Personaje");
+                Console.WriteLine("9. Ejecutar Movimiento de un Personaje");
+                Console.WriteLine("10. Salir");
+                Console.Write("Seleccione una opción: ");
+                var opcion = Console.ReadLine();
+
+                switch (opcion)
+                {
+                    case "1":
+                        CrearPersonaje();
+                        break;
+                    case "2":
+                        VerPersonajes();
+                        break;
+                    case "3":
+                        ActualizarPersonaje();
+                        break;
+                    case "4":
+                        EliminarPersonaje();
+                        break;
+                    case "5":
+                        CrearMovimiento();
+                        break;
+                    case "6":
+                        VerMovimientos();
+                        break;
+                    case "7":
+                        ActualizarMovimiento();
+                        break;
+                    case "8":
+                        EliminarMovimiento();
+                        break;
+                    case "9":
+                        EjecutarMovimiento();
+                        break;
+                    case "10":
+                        ejecutandoPrograma = false;
+                        break;
+                    default:
+                        Console.WriteLine("Opción no válida");
+                        break;
+                }
+
+                if (ejecutandoPrograma)
+                {
+                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                    Console.ReadKey();
+                }
+            }
+        }
+
+        static void CrearPersonaje()
+        {
+            Console.Write("Ingrese el nombre del personaje: ");
+            string nombre = Console.ReadLine();
+            personajes.Add(new Personaje(nombre));
+            Console.WriteLine($"Personaje '{nombre}' creado.");
+        }
+
+        static void VerPersonajes()
+        {
+            if (personajes.Count == 0)
+            {
+                Console.WriteLine("No hay personajes.");
+            }
+            else
+            {
+                Console.WriteLine("Lista de personajes:");
+                for (int i = 0; i < personajes.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {personajes[i].Nombre}");
+                }
+            }
+        }
+
+        static void ActualizarPersonaje()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje a actualizar: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    Console.Write("Ingrese el nuevo nombre del personaje: ");
+                    string nuevoNombre = Console.ReadLine();
+                    personajes[indice].Nombre = nuevoNombre;
+                    Console.WriteLine("Personaje actualizado.");
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+
+        static void EliminarPersonaje()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje a eliminar: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    Console.WriteLine($"Personaje '{personajes[indice].Nombre}' eliminado.");
+                    personajes.RemoveAt(indice);
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+
+        static void CrearMovimiento()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje para crear un movimiento: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    Console.Write("Ingrese la descripción del movimiento: ");
+                    string descripcion = Console.ReadLine();
+                    personajes[indice].Movimientos.Add(new Movimiento(descripcion));
+                    Console.WriteLine("Movimiento creado.");
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+
+        static void VerMovimientos()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje para ver sus movimientos: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    var movimientos = personajes[indice].Movimientos;
+                    if (movimientos.Count == 0)
+                    {
+                        Console.WriteLine("Este personaje no tiene movimientos.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Movimientos de {personajes[indice].Nombre}:");
+                        for (int i = 0; i < movimientos.Count; i++)
+                        {
+                            Console.WriteLine($"{i + 1}. {movimientos[i].Descripcion}");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                    
+                }
+            }
+        }
+
+        static void ActualizarMovimiento()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje para actualizar un movimiento: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    var movimientos = personajes[indice].Movimientos;
+                    if (movimientos.Count > 0)
+                    {
+                        Console.Write("Seleccione el número del movimiento a actualizar: ");
+                        int movIndice = int.Parse(Console.ReadLine()) - 1;
+                        if (movIndice >= 0 && movIndice < movimientos.Count)
+                        {
+                            Console.Write("Ingrese la nueva descripción del movimiento: ");
+                            string nuevaDescripcion = Console.ReadLine();
+                            movimientos[movIndice].Descripcion = nuevaDescripcion;
+                            Console.WriteLine("Movimiento actualizado.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("movimiento no válido.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Este personaje no tiene movimientos.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+
+        static void EliminarMovimiento()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje para eliminar un movimiento: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    var movimientos = personajes[indice].Movimientos;
+                    if (movimientos.Count > 0)
+                    {
+                        Console.Write("Seleccione el número del movimiento a eliminar: ");
+                        int movIndice = int.Parse(Console.ReadLine()) - 1;
+                        if (movIndice >= 0 && movIndice < movimientos.Count)
+                        {
+                            Console.WriteLine($"Movimiento '{movimientos[movIndice].Descripcion}' eliminado.");
+                            movimientos.RemoveAt(movIndice);
+                        }
+                        else
+                        {
+                            Console.WriteLine("movimiento no válido.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Este personaje no tiene movimientos.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+
+        static void EjecutarMovimiento()
+        {
+            VerPersonajes();
+            if (personajes.Count > 0)
+            {
+                Console.Write("Seleccione el número del personaje para ejecutar un movimiento: ");
+                int indice = int.Parse(Console.ReadLine()) - 1;
+                if (indice >= 0 && indice < personajes.Count)
+                {
+                    var movimientos = personajes[indice].Movimientos;
+                    if (movimientos.Count > 0)
+                    {
+                        Console.Write("Seleccione el número del movimiento a ejecutar: ");
+                        int movIndice = int.Parse(Console.ReadLine()) - 1;
+                        if (movIndice >= 0 && movIndice < movimientos.Count)
+                        {
+                            movimientos[movIndice].Ejecutar(personajes[indice].Nombre);
+                        }
+                        else
+                        {
+                            Console.WriteLine("movimiento no válido.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Este personaje no tiene movimientos.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("personaje no válido o inexistente.");
+                }
+            }
+        }
+    }
+}
+------------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Clase Puntaje
+class Puntaje {
+public:
+    int puntaje;
+
+    Puntaje(int _puntaje) : puntaje(_puntaje) {}
+};
+
+// Clase Usuario
+class Usuario {
+public:
+    int id;
+    string nombre;
+    string nombreUsuario;
+    vector<Puntaje> puntajes;  // Lista de puntajes asociados al usuario
+
+    Usuario(int _id, string _nombre, string _nombreUsuario) 
+        : id(_id), nombre(_nombre), nombreUsuario(_nombreUsuario) {}
+};
+
+// Vectores globales para almacenar usuarios
+vector<Usuario> usuarios;
+
+// Funciones CRUD para Usuarios
+void crearUsuario() {
+    int id;
+    string nombre, nombreUsuario;
+
+    cout << "Ingrese el ID del usuario: ";
+    cin >> id;
+    cout << "Ingrese el nombre del usuario: ";
+    cin.ignore();
+    getline(cin, nombre);
+    cout << "Ingrese el nickname de usuario: ";
+    getline(cin, nombreUsuario);
+
+    usuarios.push_back(Usuario(id, nombre, nombreUsuario));
+    cout << "Usuario creado con éxito.\n";
+}
+
+void verUsuarios() {
+    if (usuarios.empty()) {
+        cout << "No hay usuarios registrados.\n";
+        return;
+    }
+    for (const auto& usuario : usuarios) {
+        cout << "ID: " << usuario.id << ", Nombre: " << usuario.nombre << ", Usuario: " << usuario.nombreUsuario << "\n";
+    }
+}
+
+void actualizarUsuario() {
+    int id;
+    cout << "Ingrese el ID del usuario a actualizar: ";
+    cin >> id;
+
+    for (auto& usuario : usuarios) {
+        if (usuario.id == id) {
+            cout << "Ingrese el nuevo nombre: ";
+            cin.ignore();
+            getline(cin, usuario.nombre);
+            cout << "Ingrese el nuevo nickname de usuario: ";
+            getline(cin, usuario.nombreUsuario);
+            cout << "Usuario actualizado con éxito.\n";
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+void eliminarUsuario() {
+    int id;
+    cout << "Ingrese el ID del usuario a eliminar: ";
+    cin >> id;
+
+    for (auto it = usuarios.begin(); it != usuarios.end(); ++it) {
+        if (it->id == id) {
+            usuarios.erase(it);
+            cout << "Usuario eliminado con éxito.\n";
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+// Funciones CRUD para Puntajes
+void crearPuntaje() {
+    int idUsuario, puntaje;
+
+    cout << "Ingrese el ID del usuario para agregar un puntaje: ";
+    cin >> idUsuario;
+
+    for (auto& usuario : usuarios) {
+        if (usuario.id == idUsuario) {
+            cout << "Ingrese el puntaje: ";
+            cin >> puntaje;
+            usuario.puntajes.push_back(Puntaje(puntaje));
+            cout << "Puntaje registrado con éxito para el usuario " << usuario.nombre << ".\n";
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+void verPuntajes() {
+    int idUsuario;
+
+    cout << "Ingrese el ID del usuario para ver sus puntajes: ";
+    cin >> idUsuario;
+
+    for (const auto& usuario : usuarios) {
+        if (usuario.id == idUsuario) {
+            if (usuario.puntajes.empty()) {
+                cout << "Este usuario no tiene puntajes registrados.\n";
+            } else {
+                cout << "Puntajes de " << usuario.nombre << ":\n";
+                for (size_t i = 0; i < usuario.puntajes.size(); i++) {
+                    cout << "Puntaje " << i + 1 << ": " << usuario.puntajes[i].puntaje << "\n";
+                }
+            }
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+void actualizarPuntaje() {
+    int idUsuario, indicePuntaje, nuevoPuntaje;
+
+    cout << "Ingrese el ID del usuario cuyo puntaje desea actualizar: ";
+    cin >> idUsuario;
+
+    for (auto& usuario : usuarios) {
+        if (usuario.id == idUsuario) {
+            if (usuario.puntajes.empty()) {
+                cout << "Este usuario no tiene puntajes registrados.\n";
+                return;
+            }
+
+            cout << "Ingrese el número de puntaje a actualizar: ";
+            cin >> indicePuntaje;
+
+            if (indicePuntaje > 0 && indicePuntaje <= usuario.puntajes.size()) {
+                cout << "Ingrese el nuevo puntaje: ";
+                cin >> nuevoPuntaje;
+                usuario.puntajes[indicePuntaje - 1].puntaje = nuevoPuntaje;
+                cout << "Puntaje actualizado con éxito.\n";
+            } else {
+                cout << "Índice de puntaje no válido.\n";
+            }
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+void eliminarPuntaje() {
+    int idUsuario, indicePuntaje;
+
+    cout << "Ingrese el ID del usuario cuyo puntaje desea eliminar: ";
+    cin >> idUsuario;
+
+    for (auto& usuario : usuarios) {
+        if (usuario.id == idUsuario) {
+            if (usuario.puntajes.empty()) {
+                cout << "Este usuario no tiene puntajes registrados.\n";
+                return;
+            }
+
+            cout << "Ingrese el número de puntaje a eliminar: ";
+            cin >> indicePuntaje;
+
+            if (indicePuntaje > 0 && indicePuntaje <= usuario.puntajes.size()) {
+                usuario.puntajes.erase(usuario.puntajes.begin() + (indicePuntaje - 1));
+                cout << "Puntaje eliminado con éxito.\n";
+            } else {
+                cout << "Índice de puntaje no válido.\n";
+            }
+            return;
+        }
+    }
+    cout << "Usuario no encontrado.\n";
+}
+
+// Menú Principal
+void mostrarMenu() {
+    cout << "\n===== MENÚ =====\n";
+    cout << "1. Crear Usuario\n";
+    cout << "2. Ver Usuarios\n";
+    cout << "3. Actualizar Usuario\n";
+    cout << "4. Eliminar Usuario\n";
+    cout << "5. Crear Puntaje\n";
+    cout << "6. Ver Puntajes\n";
+    cout << "7. Actualizar Puntaje\n";
+    cout << "8. Eliminar Puntaje\n";
+    cout << "9. Salir\n";
+}
+
+int main() {
+    int opcion;
+    bool ejecutando = true;
+
+    while (ejecutando) {
+        mostrarMenu();
+        cout << "Seleccione una opción: ";
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                crearUsuario();
+                break;
+            case 2:
+                verUsuarios();
+                break;
+            case 3:
+                actualizarUsuario();
+                break;
+            case 4:
+                eliminarUsuario();
+                break;
+            case 5:
+                crearPuntaje();
+                break;
+            case 6:
+                verPuntajes();
+                break;
+            case 7:
+                actualizarPuntaje();
+                break;
+            case 8:
+                eliminarPuntaje();
+                break;
+            case 9:
+                ejecutando = false;
+                cout << "Saliendo...\n";
+                break;
+            default:
+                cout << "Opción no válida.\n";
+                break;
+        }
+    }
+
+    return 0;
+}
+
